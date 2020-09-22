@@ -16,7 +16,8 @@ var startActivityCmd = &cobra.Command{
 	Use:   "start [project_id]",
 	Short: "start timer for project. Use 'default' flag to use default project id.",
 	Long: `Start timer for project. User 'default' flag to use default project id.
-	You can set your default project with clockify-cli projects.`,
+	You can set your default project with clockify-cli projects.
+	If the flag and project id is omitted, and the default is set. Thw default will be used!`,
 	Run: func(cmd *cobra.Command, args []string) {
 		key := viper.Get("API-KEY").(string)
 		workspace := viper.Get("workspace")
@@ -28,9 +29,7 @@ var startActivityCmd = &cobra.Command{
 			cur_time.Hour(), cur_time.Minute(), cur_time.Second())
 
 		project := ""
-		fmt.Println(len(args), "size of args.")
-
-		if len(args) == 0 && !viper.IsSet("default-project") {
+		if len(args) == 0 && viper.IsSet("default-project") {
 			project = viper.Get("default-project").(string)
 		} else if len(args) > 0 && len(args[0]) == 23 {
 			project = args[0]
@@ -51,7 +50,7 @@ var startActivityCmd = &cobra.Command{
 		}
 		client := &http.Client{}
 		req, _ := http.NewRequest("POST", fmt.Sprintf("https://api.clockify.me/api/v1/workspaces/%s/time-entries", workspace), bytes.NewBuffer(reqBody))
-		req.Header.Set("X-Api-Key", key)
+		req.Header.Set("X-API-KEY", key)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		resp, err := client.Do(req)
@@ -69,8 +68,8 @@ var stopActivityCmd = &cobra.Command{
 	Short: "Stops an active timer.",
 	Run: func(cmd *cobra.Command, args []string) {
 		key := viper.Get("API-KEY").(string)
-		workspace := viper.Get("workspace")
-		user := viper.Get("user_id")
+		workspace := viper.Get("WORKSPACE")
+		user := viper.Get("USER-ID")
 
 		loc, _ := time.LoadLocation("UTC")
 		cur_time := time.Now().In(loc)
@@ -87,7 +86,7 @@ var stopActivityCmd = &cobra.Command{
 		}
 		client := &http.Client{}
 		req, _ := http.NewRequest("PATCH", fmt.Sprintf("https://test.clockify.me/api/v1/workspaces/%s/user/%s/time-entries", workspace, user), bytes.NewBuffer(reqBody))
-		req.Header.Set("X-Api-Key", key)
+		req.Header.Set("X-API-KEY", key)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		resp, err := client.Do(req)

@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 
+	"text/tabwriter"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -22,13 +24,15 @@ type project struct {
 
 var projectsCmd = &cobra.Command{
 	Use:   "projects",
-	Short: "List workspace projects",
+	Short: "Select default workspace project",
+	Long: `Display all workspace projects and 
+	select the default project to use when starting a timer`,
 	Run: func(cmd *cobra.Command, args []string) {
 		key := viper.Get("API-KEY").(string)
-		workspace := viper.Get("workspace")
+		workspace := viper.Get("WORKSPACE")
 		client := &http.Client{}
 		req, _ := http.NewRequest("GET", fmt.Sprintf("https://api.clockify.me/api/v1/workspaces/%s/projects", workspace), nil)
-		req.Header.Set("X-Api-Key", key)
+		req.Header.Set("X-API-KEY", key)
 		resp, err := client.Do(req)
 		if err != nil {
 			log.Fatal(err)
@@ -41,21 +45,22 @@ var projectsCmd = &cobra.Command{
 		if jsonErr != nil {
 			log.Fatal(jsonErr)
 		}
+
+		writer := new(tabwriter.Writer)
+		writer.Init(os.Stdout, 12, 8, 12, '\t', 0)
+
 		for i, r := range results {
-			if i%3 == 0 {
-				fmt.Println("")
+			if i > 0 && i%3 == 0 {
+				fmt.Fprintf(writer, "\n")
 			}
-			fmt.Printf("(%d) %s, %s.", i+1, r.Name, r.Id)
-			for i := len(r.Name) / 17; i < 4; i++ {
-				fmt.Print("\t")
-			}
+			fmt.Fprintf(writer, "(%d) %s\t", i+1, r.Name)
 		}
-		fmt.Print("\n\nSave a project as default: ")
+		writer.Flush()
+		fmt.Print("\n\nSave a project as default (number): ")
 		reader := bufio.NewReader(os.Stdin)
 		value, err := reader.ReadString('\n')
 		if err == nil {
 			l := strings.Trim(value, "\n")
-			fmt.Println(l)
 			v, _ := strconv.Atoi(l)
 			if err != nil {
 				log.Fatal(err)

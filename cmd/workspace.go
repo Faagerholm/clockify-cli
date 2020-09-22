@@ -17,7 +17,7 @@ var workspaceCmd = &cobra.Command{
 		key := viper.Get("API-KEY").(string)
 		client := &http.Client{}
 		req, _ := http.NewRequest("GET", "https://api.clockify.me/api/v1/workspaces", nil)
-		req.Header.Set("X-Api-Key", key)
+		req.Header.Set("X-API-KEY", key)
 		req.Header.Set("Host", "api.clockify.me")
 
 		resp, err := client.Do(req)
