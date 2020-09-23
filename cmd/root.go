@@ -79,7 +79,7 @@ func Execute() error {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "configFile", "c", home+"/.clockify-cli/config.json", "configuration file, default is "+home+"/.clockify-cli/config.json")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "configFile", "c", home+"/.clockify-cli/config.json", "configuration file,")
 	rootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
 	viper.BindPFlag("useViper", rootCmd.PersistentFlags().Lookup("viper"))
 	viper.SetDefault("author", "Jimmy Fagerholm fagerholm.jimmy@gmail.com")
@@ -99,6 +99,8 @@ func init() {
 	rootCmd.AddCommand(workspaceCmd)
 	// utils.go
 	rootCmd.AddCommand(versionCmd)
+	// report.go
+	rootCmd.AddCommand(saldoCmd)
 }
 
 func er(msg interface{}) {

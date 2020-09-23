@@ -20,7 +20,7 @@ var startActivityCmd = &cobra.Command{
 	If the flag and project id is omitted, and the default is set. Thw default will be used!`,
 	Run: func(cmd *cobra.Command, args []string) {
 		key := viper.Get("API-KEY").(string)
-		workspace := viper.Get("workspace")
+		workspace := viper.Get("WORKSPACE")
 
 		loc, _ := time.LoadLocation("UTC")
 		cur_time := time.Now().In(loc)
