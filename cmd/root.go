@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/fsnotify/fsnotify"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -65,9 +64,16 @@ var addKeyCmd = &cobra.Command{
 			}
 
 		case 'N':
-			fmt.Println("The key was not added.")
+			fmt.Println("The key was NOT added.")
 		}
 
+	},
+}
+var resetViperCmd = &cobra.Command{
+	Use:   "reset",
+	Short: "Resets viper values",
+	Run: func(cmd *cobra.Command, args []string) {
+		viper.Reset()
 	},
 }
 
@@ -79,20 +85,24 @@ func Execute() error {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "configFile", "c", home+"/.clockify-cli/config.json", "configuration file,")
+	viper.Debug()
+
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "./config.yaml", "config file (default is $HOME/.clockify-cli/config.yaml)")
 	rootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
-	viper.BindPFlag("useViper", rootCmd.PersistentFlags().Lookup("viper"))
-	viper.SetDefault("author", "Jimmy Fagerholm fagerholm.jimmy@gmail.com")
+	// viper.BindPFlag("useViper", rootCmd.PersistentFlags().Lookup("viper"))
+
 	//root.go
 	rootCmd.AddCommand(addKeyCmd)
+	rootCmd.AddCommand(resetViperCmd)
 	// project.go
 	rootCmd.AddCommand(projectsCmd)
+	rootCmd.AddCommand(offProjectsCmd)
 	// entry.go
 	rootCmd.AddCommand(startActivityCmd)
 	rootCmd.AddCommand(stopActivityCmd)
 
 	startActivityCmd.Flags().BoolVarP(&defFlag, "default", "d", false, "Use default project id.")
-	viper.BindPFlag("default", startActivityCmd.Flags().Lookup("default-project"))
+	// viper.BindPFlag("default", startActivityCmd.Flags().Lookup("default-project"))
 	// user.go
 	rootCmd.AddCommand(userCmd)
 	// workspace.go
@@ -118,27 +128,14 @@ func initConfig() {
 		if err != nil {
 			er(err)
 		}
-		cfgPath = home + "/.clockify-cli/"
-
-		// Search config in home directory with name ".cobra" (without extension).
-		viper.AddConfigPath(cfgPath)
+		viper.AddConfigPath(home + "/.clockify-cli")
 		viper.SetConfigName("config")
-		viper.SetConfigType("json")
+		viper.SetConfigType("yaml")
 	}
 
 	viper.AutomaticEnv()
 
-	_, err := os.Stat(home)
-	if !os.IsExist(err) {
-		if _, err := os.Create(cfgPath); err != nil { // perm 0666
-			// handle failed create
-		}
-	}
 	if err := viper.ReadInConfig(); err == nil {
-		// fmt.Println("Using config file:", viper.ConfigFileUsed())
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
-	viper.WatchConfig()
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		fmt.Println("Config file changed:", e.Name)
-	})
 }

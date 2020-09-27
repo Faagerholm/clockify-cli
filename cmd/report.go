@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -25,6 +26,17 @@ import (
     "status": "ALL"
   }
 */
+
+type result struct {
+	Entries []entry `json:"timeentries"`
+}
+
+type entry struct {
+	ProjectId string    `json:"projectId"`
+	Start     time.Time `json:"timeInterval.start"`
+	End       time.Time `json:"timeInterval.end"`
+	Duration  int       `json:"timeInterval.duration"`
+}
 
 type report struct {
 	Start          string         `json:"dateRangeStart"`
@@ -85,15 +97,32 @@ var saldoCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		} else {
-			log.Println("Project started")
+			var dat map[string]interface{}
+
+			if err := json.Unmarshal(reqBody, &dat); err != nil {
+				panic(err)
+			}
+			enc := json.NewEncoder(os.Stdout)
+			enc.Encode(dat)
 		}
 		defer resp.Body.Close()
 
-		var result map[string]interface{}
+		var res map[string]result
 
-		json.NewDecoder(resp.Body).Decode(&result)
-		if result != nil {
-			fmt.Println(result)
+		json.NewDecoder(resp.Body).Decode(&res)
+		if res != nil {
+			json.NewEncoder(os.Stdout).Encode(res)
+			off_projects := viper.Get("off-projects")
+
+			if off_projects == nil {
+				fmt.Println(`No off projects defined, these hours might no be correct, please check the off-project command.
+				If your workspace doesn't have any off-projects, you can simple ignore this message.`)
+			}
+			// For each day, + or - (ignore off-hours).
+			// flex hours should be subtracted
+			// append hours if day already in list.
+			// divide with how many days in list.
+			// print saldo.
 		} else {
 			fmt.Println("Could not get report:", err)
 		}
