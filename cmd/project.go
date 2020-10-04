@@ -78,8 +78,8 @@ var projectsCmd = &cobra.Command{
 var offProjectsCmd = &cobra.Command{
 	Use:   "off-projects",
 	Short: "Select which projects should be omitted from reports",
-	Long: `Display all projects and select which shouldn't be included in 'saldo' report.
-	By not selecting these projects the CLI cannot figure out which projects not to exclude when counting your saldo.`,
+	Long: `Display all projects and select which shouldn't be included in 'balance' report.
+	By not selecting these projects the CLI cannot figure out which projects not to exclude when counting your balance.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		key := viper.Get("API-KEY").(string)
 		workspace := viper.Get("WORKSPACE")
