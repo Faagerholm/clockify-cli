@@ -83,13 +83,15 @@ func Execute() error {
 }
 
 func init() {
+
+	home, _ := homedir.Dir()
 	cobra.OnInitialize(initConfig)
 
 	// viper.Debug()
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "./config.yaml", "config file (default is $HOME/.clockify-cli/config.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", home+"/.clockify-cli/config.yaml", "config file (default is $HOME/.clockify-cli/config.yaml)")
 	rootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
-	viper.BindPFlag("useViper", rootCmd.PersistentFlags().Lookup("viper"))
+	// viper.BindPFlag("useViper", rootCmd.PersistentFlags().Lookup("viper"))
 
 	//root.go
 	rootCmd.AddCommand(addKeyCmd)
@@ -102,7 +104,7 @@ func init() {
 	rootCmd.AddCommand(stopActivityCmd)
 
 	startActivityCmd.Flags().BoolVarP(&defFlag, "default", "d", false, "Use default project id.")
-	viper.BindPFlag("default", startActivityCmd.Flags().Lookup("default-project"))
+	// viper.BindPFlag("default", startActivityCmd.Flags().Lookup("default-project"))
 	// user.go
 	rootCmd.AddCommand(userCmd)
 	// workspace.go
@@ -136,6 +138,6 @@ func initConfig() {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err == nil {
-		// fmt.Println("Using config file:", viper.ConfigFileUsed())
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }

@@ -13,30 +13,16 @@ import (
 	"github.com/spf13/viper"
 )
 
-type Result struct {
-	Entries []Entry             `json:"timeentries"`
-	Totals  []map[string]string `json:"totals"`
-}
-
-type Entry struct {
-	ProjectId    string
-	TimeInterval Interval
-}
-type Interval struct {
-	Duration int
-	Start    string
-	End      string
-}
+/* Request type */
 type report struct {
-	Start          string         `json:"dateRangeStart"`
-	End            string         `json:"dateRangeEnd"`
-	DetailedFilter *report_filter `json:"detailedFilter,omitempty"`
-	ExportType     string         `json:"exportType"`
-	Rounding       string         `json:"rounding"`
-	AmountShown    string         `json:"amountShown"`
-	Users          *report_user   `json:"users"`
+	Start         string         `json:"dateRangeStart"`
+	End           string         `json:"dateRangeEnd"`
+	SummaryFilter *report_filter `json:"summaryFilter,omitempty"`
+	SortOrder     string         `json:"sortOrder"`
+	Users         *report_user   `json:"users,omitempty"`
 }
 type report_filter struct {
+	Groups []string `json:"groups"`
 }
 type report_user struct {
 	Ids      []string `json:"ids"`
@@ -44,6 +30,22 @@ type report_user struct {
 	Status   string   `json:"status"`
 }
 
+/* Response types */
+type Result struct {
+	Entries []Entry `json:"groupOne"`
+}
+
+type Entry struct {
+	Name     string
+	Duration int
+	Children []groupChild
+}
+type groupChild struct {
+	Duration int
+	Name     string
+}
+
+/* const */
 const (
 	week_seconds = 27000 // 37.5 * 60 * 60
 )
@@ -52,9 +54,19 @@ var balanceCmd = &cobra.Command{
 	Use:   "balance",
 	Short: "Display if you're above or below zero balance.",
 	Run: func(cmd *cobra.Command, args []string) {
-		key := viper.Get("API-KEY").(string)
-		workspace := viper.Get("WORKSPACE")
+		key := viper.GetString("API-KEY")
+		workspace := viper.GetString("WORKSPACE")
 		user := viper.GetString("USER-ID")
+
+		if len(key) == 0 {
+			fmt.Println("API KEY NOT SET! Please run clockify app-key")
+			return
+		}
+
+		if len(user) == 0 || len(workspace) == 0 {
+			fmt.Println("User not set, please run `clockify user` to update the current user.")
+			return
+		}
 
 		loc, _ := time.LoadLocation("UTC")
 		cur_time := time.Now().In(loc)
@@ -67,21 +79,21 @@ var balanceCmd = &cobra.Command{
 			Contains: "CONTAINS",
 			Status:   "All",
 		}
-		filter := report_filter{}
+		filter := report_filter{
+			Groups: []string{"user", "date"},
+		}
 		reqBody, err := json.Marshal(report{
-			Start:          start_time,
-			End:            end_time,
-			DetailedFilter: &filter,
-			ExportType:     "JSON",
-			Rounding:       "false",
-			AmountShown:    "HIDE_AMOUNT",
-			Users:          &users,
+			Start:         start_time,
+			End:           end_time,
+			SummaryFilter: &filter,
+			SortOrder:     "Ascending",
+			Users:         &users,
 		})
 		if err != nil {
 			log.Fatal(err)
 		}
 		client := &http.Client{}
-		req, _ := http.NewRequest("POST", fmt.Sprintf("https://reports.api.clockify.me/v1/workspaces/%s/reports/detailed", workspace), bytes.NewBuffer(reqBody))
+		req, _ := http.NewRequest("POST", fmt.Sprintf("https://reports.api.clockify.me/v1/workspaces/%s/reports/summary", workspace), bytes.NewBuffer(reqBody))
 		req.Header.Set("X-API-KEY", key)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
@@ -97,48 +109,32 @@ var balanceCmd = &cobra.Command{
 		json.NewDecoder(resp.Body).Decode(&res)
 		if res != nil {
 			// json.NewEncoder(os.Stdout).Encode(res)
-			off_projects := viper.Get("off-projects")
 
-			if off_projects == nil {
-				fmt.Println(`No off projects defined, these hours might no be correct, please check the off-project command.
-				If your workspace doesn't have any off-projects, you can simple ignore this message.`)
-			}
-			var days []string
-			var max_days = 0.0
-			var duration int
-			for _, v := range res.Entries {
-				duration += v.TimeInterval.Duration
-				if !stringInSlice(v.ProjectId, off_projects) {
-					if !stringInSlice(v.TimeInterval.Start[0:10], days) {
-						days = append(days, v.TimeInterval.Start[0:10])
-					}
+			// Get first day of reports (of this year)
+			first_day, _ := time.Parse("2006-01-02", res.Entries[0].Children[0].Name)
+			// today
+			today, _ := time.Parse("2006-01-02", end_time[0:10])
+			max_days := (today.Sub(first_day).Hours() / 24) + 1
+
+			// This is ugly, but works for now. Use fancy algorithm later
+			var this_day = first_day
+			for (this_day.Sub(today).Hours() / 24) <= 0 {
+				// TODO: Compare if day == holiday
+				if this_day.Weekday().String() == "Saturday" || this_day.Weekday().String() == "Sunday" {
+					max_days -= 1
 				}
+				// Add one day.
+				this_day = this_day.Add(time.Hour * 24)
 			}
-
-			if len(days) >= 2 {
-				first_day, _ := time.Parse("2006-01-02", days[len(days)-1])
-				last_day, _ := time.Parse("2006-01-02", days[0])
-				max_days = (last_day.Sub(first_day).Hours() / 24) + 1
-
-				// This is ugly, but works for now. Use fancy algorithm later
-				var this_day = first_day
-				for (this_day.Sub(last_day).Hours() / 24) <= 0 {
-					// TODO: Compare if day == holiday
-					if this_day.Weekday().String() == "Saturday" || this_day.Weekday().String() == "Sunday" {
-						max_days -= 1
-					}
-					// Add one day.
-					this_day = this_day.Add(time.Hour * 24)
-				}
-			}
-			var balance = (float64(duration) - max_days*week_seconds) / (60 * 60)
+			var balance = (float64(res.Entries[0].Duration) - max_days*week_seconds) / (60 * 60)
 			fmt.Printf("----------------------\nYou have worked %.0f days.\n", max_days)
 			fmt.Printf("You have worked %.2f hours, and the recommended amount is %.2f hours.\nWhich makes your balance %dh%dmin  (%.2f)\n",
-				float64(duration)/float64(60.0*60.0),
+				float64(res.Entries[0].Duration)/float64(60.0*60.0),
 				float64(max_days*week_seconds/(60*60)),
 				int(balance),
 				int((math.Abs(balance)-math.Abs(float64(int(balance))))*60),
 				balance)
+
 		} else {
 			fmt.Println("Could not get report:", err)
 		}

@@ -1,13 +1,27 @@
 # clockify-cli
 Integrate your clocking with your favorite CLI. 
 
-### Supported commands
+### Usage:
+```
+  clockify-cli [flags]  
+  clockify-cli [command]
+```
+### Available commands:
+```
+  add-key      Add users API-KEY
+  balance      Display if you're above or below zero balance.
+  help         Help about any command
+  off-projects Select which projects should be omitted from reports
+  projects     Select default workspace project
+  reset        Resets viper values
+  start        start timer for project. Use 'default' flag to use default project id.
+  stop         Stops an active timer.
+  user         get current user
+  version      Print the version number of Clockify-cli
+  workspace    Get workspaces
 
-|Command | Flags | Comment |
-|:---|:---|:---|
-|add-key [KEY] | | Add your API key, this one is important to start with|
-|user| |Test your key, at the same time gets your active workspace |
-|start [PROJECT_ID]| -d default | Start your timer, either the default project or by PROJECT_ID |
-|stop | | Stops the active tracker |
-|projects | | List projects and select default project.
-|help | | Print all available commands and their usage description |
+Flags:
+      --config string   config file (default is $HOME/.clockify-cli/config.yaml) (default "./config.yaml")
+  -h, --help            help for clockify-cli
+      --viper           use Viper for configuration (default true)
+```
