@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/faagerholm/clockify-cli/cmd"
+	"github.com/Faagerholm/clockify-cli/cmd"
 )
 
 func main() {
