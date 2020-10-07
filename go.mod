@@ -1,4 +1,4 @@
-module github.com/faagerholm/clockify-cli
+module github.com/Faagerholm/clockify-cli
 
 go 1.14
 
