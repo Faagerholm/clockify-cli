@@ -11,6 +11,6 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number of Clockify-cli",
 	Long:  `All software has versions. This is clockify-cli's`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Print("Clockify-cli application version 0.3 -- HEAD")
+		fmt.Println("Clockify-cli application version 1.1 -- HEAD")
 	},
 }

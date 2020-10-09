@@ -14,7 +14,7 @@ var userCmd = &cobra.Command{
 	Use:   "user",
 	Short: "get current user",
 	Run: func(cmd *cobra.Command, args []string) {
-		key := viper.Get("API-KEY").(string)
+		key := viper.GetString("API-KEY")
 		client := &http.Client{}
 		req, _ := http.NewRequest("GET", "https://api.clockify.me/api/v1/user", nil)
 		req.Header.Set("X-API-KEY", key)
