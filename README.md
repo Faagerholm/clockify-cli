@@ -36,3 +36,12 @@ Flags:
   -h, --help            help for clockify-cli
       --viper           use Viper for configuration (default true)
 ```
+
+### Contributing:
+
+Please open an issue if there is something that is not working or you would like to be added to this project.
+
+### External API:
+
+Clockify has an API that this project heavily depends on. The API can be accessed by any user that has generated an API key from their user settings page.
+More information about the API can be found here: https://clockify.me/developers-api
