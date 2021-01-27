@@ -46,6 +46,12 @@ type groupChild struct {
 	Name     string
 }
 
+type partTime []struct {
+	startDate string
+	endDate   string
+	capacity  float64
+}
+
 /* const */
 const (
 	week_seconds = 27000 // 37.5 * 60 * 60
@@ -75,20 +81,29 @@ var balanceCmd = &cobra.Command{
 		if entry != nil {
 			first_day := findFirstDay(entry)
 			first_day_str := fmt.Sprintf("%d-%02d-%02d", first_day.Year(), first_day.Month(), first_day.Day())
-			log.Println(first_day_str)
+			log.Println("Your first day:", first_day_str)
 			work_days := daysCalc(end_time[0:10], first_day_str)
 
-			//TODO: remove hard-coded part-time day
-			var part_time_days float64
-			part_time_percent := 1 - 0.8 // => 80%
-			if true {
-				part_time_days = daysCalc(end_time[0:10], "2020-11-01")
-			} else {
-				part_time_days = 0
+			var partTime []struct {
+				StartDate string
+				EndDate   string
+				Capacity  float64
 			}
+			viper.UnmarshalKey("part-time", &partTime)
+			log.Println(partTime)
 
-			log.Println(part_time_days)
-			log.Println(entry.Duration)
+			var part_time_days float64
+			var part_time_percent float64 // => 80%
+			for _, part := range partTime {
+				if part.EndDate == "" {
+					part_time_days = daysCalc(fmt.Sprintf("%d-%02d-%02d", time.Now().Year(), time.Now().Month(), time.Now().Day()), part.StartDate)
+				} else {
+					part_time_days = daysCalc(part.StartDate, part.EndDate)
+				}
+				part_time_percent = 1 - part.Capacity
+			}
+			log.Println("Part time days:", part_time_days)
+			log.Println("Total minutes worked:", entry.Duration)
 			var balance = (float64(entry.Duration) - work_days*week_seconds + part_time_days*week_seconds*part_time_percent) / (60 * 60)
 			fmt.Printf("----------------------\nYou have worked %.0f days.\nYou have worked %.2f hours, and the recommended amount is %.2f hours.\nWhich makes your balance %dh%dmin  (%.2f)\nThis calculator includes today.\n",
 				work_days, // days
@@ -127,7 +142,6 @@ func createEntry(result *Result) *Entry {
 		entry.Children = append(entry.Children, e.Children...)
 		entry.Duration += e.Duration
 	}
-	log.Println(entry)
 	return entry
 }
 
