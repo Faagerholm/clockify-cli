@@ -9,6 +9,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Faagerholm/clockify-cli/cmd/clockify"
+	"github.com/Faagerholm/clockify-cli/cmd/common"
+	"github.com/Faagerholm/clockify-cli/cmd/jira"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -160,22 +163,27 @@ func init() {
 	rootCmd.AddCommand(resetViperCmd)
 	rootCmd.AddCommand(initCmd)
 	// project.go
-	rootCmd.AddCommand(projectsCmd)
-	rootCmd.AddCommand(offProjectsCmd)
+	rootCmd.AddCommand(clockify.ProjectsCmd)
+	rootCmd.AddCommand(clockify.OffProjectsCmd)
 	// entry.go
-	rootCmd.AddCommand(startActivityCmd)
-	rootCmd.AddCommand(stopActivityCmd)
+	rootCmd.AddCommand(clockify.StartActivityCmd)
+	rootCmd.AddCommand(clockify.StopActivityCmd)
 
-	startActivityCmd.Flags().BoolVarP(&defFlag, "default", "d", false, "Use default project id.")
+	clockify.StartActivityCmd.Flags().BoolVarP(&defFlag, "default", "d", false, "Use default project id.")
 	// viper.BindPFlag("default", startActivityCmd.Flags().Lookup("default-project"))
 	// user.go
-	rootCmd.AddCommand(userCmd)
+	rootCmd.AddCommand(clockify.UserCmd)
 	// workspace.go
-	rootCmd.AddCommand(workspaceCmd)
+	rootCmd.AddCommand(clockify.WorkspaceCmd)
 	// utils.go
 	rootCmd.AddCommand(versionCmd)
 	// report.go
-	rootCmd.AddCommand(balanceCmd)
+	rootCmd.AddCommand(clockify.BalanceCmd)
+	rootCmd.AddCommand(clockify.WorkLogCmd)
+	// jira
+	rootCmd.AddCommand(jira.WorklogCmd)
+	rootCmd.AddCommand(jira.ImportHoursCmd)
+	rootCmd.AddCommand(common.CompareCmd)
 }
 
 func er(msg interface{}) {

@@ -1,4 +1,4 @@
-package cmd
+package clockify
 
 import (
 	"bytes"
@@ -12,15 +12,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-var startActivityCmd = &cobra.Command{
+var StartActivityCmd = &cobra.Command{
 	Use:   "start [project_id]",
 	Short: "start timer for project. Use 'default' flag to use default project id.",
 	Long: `Start timer for project. User 'default' flag to use default project id.
 	You can set your default project with clockify-cli projects.
 	If the flag and project id is omitted, and the default is set. Thw default will be used!`,
 	Run: func(cmd *cobra.Command, args []string) {
-		key := viper.Get("API-KEY").(string)
-		workspace := viper.Get("WORKSPACE")
 
 		loc, _ := time.LoadLocation("UTC")
 		cur_time := time.Now().In(loc)
@@ -30,46 +28,29 @@ var startActivityCmd = &cobra.Command{
 
 		project := ""
 		if len(args) == 0 && viper.IsSet("default-project") {
-			project = viper.Get("default-project").(string)
+			project = viper.GetString("default-project")
 		} else if len(args) > 0 && len(args[0]) == 23 {
 			project = args[0]
 		} else if len(args) > 0 && (args[0] == "d" || args[0] == "default") {
-			project = viper.Get("default-project").(string)
+			project = viper.GetString("default-project")
 		} else {
-			fmt.Println("Could not parse arguments. Check 'start --help' for more information.")
-			return
+			log.Fatal("Could not parse arguments. Check 'start --help' for more information.")
 		}
 
-		reqBody, err := json.Marshal(map[string]string{
-			"start":     start_time,
-			"projectId": project,
-		})
-
-		if err != nil {
+		reqBody, err := json.Marshal(LogEntry{Start: start_time, ProjectId: project})
+		if AddEntry(reqBody) != nil {
 			log.Fatal(err)
 		}
-		client := &http.Client{}
-		req, _ := http.NewRequest("POST", fmt.Sprintf("https://api.clockify.me/api/v1/workspaces/%s/time-entries", workspace), bytes.NewBuffer(reqBody))
-		req.Header.Set("X-API-KEY", key)
-		req.Header.Set("Content-Type", "application/json; charset=utf-8")
-
-		resp, err := client.Do(req)
-		if err != nil {
-			log.Fatal(err)
-		} else {
-			log.Println("Project started")
-		}
-		defer resp.Body.Close()
 	},
 }
 
-var stopActivityCmd = &cobra.Command{
+var StopActivityCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stops an active timer.",
 	Run: func(cmd *cobra.Command, args []string) {
-		key := viper.Get("API-KEY").(string)
-		workspace := viper.Get("WORKSPACE")
-		user := viper.Get("USER-ID")
+		key := viper.GetString("API-KEY")
+		workspace := viper.GetString("WORKSPACE")
+		user := viper.GetString("USER-ID")
 
 		loc, _ := time.LoadLocation("UTC")
 		cur_time := time.Now().In(loc)
@@ -100,6 +81,32 @@ var stopActivityCmd = &cobra.Command{
 	},
 }
 
-func getProjects() {
+var AddActivityCmd = &cobra.Command{
+	Use:   "add",
+	Short: "Add an entry",
+	Run: func(cmd *cobra.Command, args []string) {
+		project, err := SelectProject()
 
+		if err != nil {
+			log.Fatal(err)
+		}
+		_ = project
+	},
+}
+
+func AddEntry(body []byte) error {
+	key := viper.GetString("API-KEY")
+	workspace := viper.GetString("WORKSPACE")
+
+	client := &http.Client{}
+	req, _ := http.NewRequest("POST", fmt.Sprintf("https://api.clockify.me/api/v1/workspaces/%s/time-entries", workspace), bytes.NewBuffer(body))
+	req.Header.Set("X-API-KEY", key)
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return nil
 }

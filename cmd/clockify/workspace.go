@@ -1,4 +1,4 @@
-package cmd
+package clockify
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var workspaceCmd = &cobra.Command{
+var WorkspaceCmd = &cobra.Command{
 	Use:   "workspace",
 	Short: "Get workspaces",
 	Run: func(cmd *cobra.Command, args []string) {

@@ -1,4 +1,4 @@
-package cmd
+package clockify
 
 import (
 	"bufio"
@@ -17,65 +17,23 @@ import (
 	"github.com/spf13/viper"
 )
 
-type project struct {
-	Name string `json:"name"`
-	Id   string `json:"id"`
-}
-
-var projectsCmd = &cobra.Command{
+var ProjectsCmd = &cobra.Command{
 	Use:   "projects",
 	Short: "Select default workspace project",
 	Long: `Display all workspace projects and 
 	select the default project to use when starting a timer`,
 	Run: func(cmd *cobra.Command, args []string) {
-		key := viper.Get("API-KEY").(string)
-		workspace := viper.Get("WORKSPACE")
-		client := &http.Client{}
-		req, _ := http.NewRequest("GET", fmt.Sprintf("https://api.clockify.me/api/v1/workspaces/%s/projects", workspace), nil)
-		req.Header.Set("X-API-KEY", key)
-		resp, err := client.Do(req)
+		project, err := SelectProject()
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer resp.Body.Close()
-
-		body, err := ioutil.ReadAll(resp.Body)
-		results := []project{}
-		jsonErr := json.Unmarshal(body, &results)
-		if jsonErr != nil {
-			log.Fatal(jsonErr)
-		}
-
-		writer := new(tabwriter.Writer)
-		writer.Init(os.Stdout, 12, 8, 12, '\t', 0)
-
-		for i, r := range results {
-			if i > 0 && i%3 == 0 {
-				fmt.Fprintf(writer, "\n")
-			}
-			fmt.Fprintf(writer, "(%d) %s\t", i+1, r.Name)
-		}
-		writer.Flush()
-		fmt.Print("\n\nSave a project as default (number): ")
-		reader := bufio.NewReader(os.Stdin)
-		value, err := reader.ReadString('\n')
-		if err == nil {
-			l := strings.Trim(value, "\n")
-			v, _ := strconv.Atoi(l)
-			if err != nil {
-				log.Fatal(err)
-			} else {
-				p := results[v-1]
-				viper.Set("default-project", p.Id)
-				viper.WriteConfig()
-				fmt.Println("Default project set:", p)
-			}
-
-		}
+		viper.Set("default-project", project)
+		viper.WriteConfig()
+		log.Println("Default project set")
 	},
 }
 
-var offProjectsCmd = &cobra.Command{
+var OffProjectsCmd = &cobra.Command{
 	Use:   "off-projects",
 	Short: "Select which projects should be omitted from reports",
 	Long: `Display all projects and select which shouldn't be included in 'balance' report.
@@ -130,4 +88,50 @@ var offProjectsCmd = &cobra.Command{
 			}
 		}
 	},
+}
+
+func SelectProject() (*project, error) {
+	key := viper.GetString("API-KEY")
+	workspace := viper.GetString("WORKSPACE")
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", fmt.Sprintf("https://api.clockify.me/api/v1/workspaces/%s/projects", workspace), nil)
+	req.Header.Set("X-API-KEY", key)
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	results := []project{}
+	jsonErr := json.Unmarshal(body, &results)
+	if jsonErr != nil {
+		log.Fatal(jsonErr)
+	}
+
+	writer := new(tabwriter.Writer)
+	writer.Init(os.Stdout, 12, 8, 12, '\t', 0)
+
+	for i, r := range results {
+		if i > 0 && i%3 == 0 {
+			fmt.Fprintf(writer, "\n")
+		}
+		fmt.Fprintf(writer, "(%d) %s\t", i+1, r.Name)
+	}
+	writer.Flush()
+	fmt.Print("\n\nSave a project as default (number): ")
+	reader := bufio.NewReader(os.Stdin)
+	value, err := reader.ReadString('\n')
+
+	if err != nil {
+		return nil, err
+	}
+	l := strings.Trim(value, "\n")
+	v, err := strconv.Atoi(l)
+
+	if err != nil {
+		return nil, err
+	}
+	p := results[v-1]
+	return &p, err
 }

@@ -1,4 +1,4 @@
-package cmd
+package clockify
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var userCmd = &cobra.Command{
+var UserCmd = &cobra.Command{
 	Use:   "user",
 	Short: "get current user",
 	Run: func(cmd *cobra.Command, args []string) {
