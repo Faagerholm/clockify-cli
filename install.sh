@@ -3,7 +3,9 @@
 DEFAULT=$(tput sgr0)
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
+BLUE=$(tput setaf 4)
 LIME_YELLOW=$(tput setaf 190)
+
 PROJECT_HOME="$HOME/.clockify-cli"
 
 echo "${LIME_YELLOW}Initializing clockify-cli..${DEFAULT}"
@@ -92,7 +94,7 @@ rm "$tarfilename.md5"
 echo "----------------------------"
 mv clockify-cli $PROJECT_HOME/
 echo "To get started you will need a API-key. The key can be genereted on your profile page."
-echo "Generate your API-key here: https://clockify.me/user/settings"
+echo "Generate your API-key here: ${BLUE}https://clockify.me/user/settings${DEFAULT}"
 
 # Run setup
 $PROJECT_HOME/clockify-cli setup
