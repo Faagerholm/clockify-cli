@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/Faagerholm/clockify-cli/cmd"
+	"github.com/Faagerholm/clockify-cli/pkg"
 )
 
 func main() {
-	cmd.Execute()
+	pkg.Execute()
 }
