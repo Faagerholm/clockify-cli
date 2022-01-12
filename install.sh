@@ -1,8 +1,12 @@
 #!/bin/bash
 
+DEFAULT=$(tput sgr0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+LIME_YELLOW=$(tput setaf 190)
 PROJECT_HOME="$HOME/.clockify-cli"
 
-echo 'Initializing clockify-cli'
+echo "${LIME_YELLOW}Initializing clockify-cli..${DEFAULT}"
 
 if [ -d $PROJECT_HOME ]; then
         echo "Project directory already exists"
@@ -21,152 +25,77 @@ fi
 echo "Creating alias for clockify"
 if [ -f "$HOME/.zshrc" ]; then
         echo "Adding it to your zshrc file."
-        alias clockify >/dev/null 2>&1 && echo "clockify is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.zshrc
+        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.zshrc
 elif [ -f "$HOME/.bash_profile" ]; then
         echo "Adding it to your bash_profile file."
-        alias clockify >/dev/null 2>&1 && echo "clockify is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.bash_profile
+        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.bash_profile
 else
-        echo "Could not fine a terminal profile, please manually add 'alias clockify='$PROJECT_HOME/clockify-cli' to your profile."
+        echo "Could not fine a terminal profile, please manually add ${GREEN}alias clockify='$PROJECT_HOME/clockify-cli'${DEFAULT} to your profile."
 fi
 
-processor="$(uname -m)"
-echo "Downloading the latest release for your machine, expected OS: ${processor}"
+PROCESSOR="$(uname -m)"
+OS_PROCESSOR=""
+echo "${LIME_YELLOW}Downloading the latest release for your machine..${DEFAULT}"
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        if [[ "$processor" == "i386" ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'linux-386' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                rm $tarfilename
-        elif [[ "$processor" == *"x86"* ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'linux-amd64' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                rm $tarfilename
+        if [[ "$PROCESSOR" == "i386" ]]; then
+                OS_PROCESSOR="linux-386"
+        elif [[ "$PROCESSOR" == *"x86"* ]]; then
+                OS_PROCESSOR="linux-amd64"
         fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-        if [[ "$processor" == "i386" ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'darwin-386' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                echo $tarfilename
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                rm $tarfilename
-        elif [[ "$processor" == *"x86"* ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'darwin-amd64' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                rm $tarfilename
+        if [[ "$PROCESSOR" == "i386" ]]; then
+                OS_PROCESSOR="darwin-386"
+        elif [[ "$PROCESSOR" == *"x86"* ]]; then
+                OS_PROCESSOR="darwin-amd64"
         fi
 elif [[ "$OSTYPE" == "cygwin" ]]; then
         # POSIX compatibility layer and Linux environment emulation for Windows
-        if [[ "$processor" == "i386" ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'windows-386' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                rm $tarfilename
-        elif [[ "$processor" == *"x86"* ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'windows-amd64' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                rm $tarfilename
+        if [[ "$PROCESSOR" == "i386" ]]; then
+                OS_PROCESSOR="windows-386"
+        elif [[ "$PROCESSOR" == *"x86"* ]]; then
+                $OS_PROCESSOR="windows-amd64"
         fi
 elif [[ "$OSTYPE" == "msys" ]]; then
         # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
-        if [[ "$processor" == "i386" ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'windows-386' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                rm $tarfilename
-        elif [[ "$processor" == *"x86"* ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'windows-amd64' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                rm $tarfilename
+        if [[ "$PROCESSOR" == "i386" ]]; then
+                OS_PROCESSOR="windows-386"
+        elif [[ "$PROCESSOR" == *"x86"* ]]; then
+                OS_PROCESSOR="windows-amd64"
         fi
 elif [[ "$OSTYPE" == "win32" ]]; then
         # I'm not sure this can happen.
-        if [[ "$processor" == "i386" ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'windows-386' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
-        elif [[ "$processor" == *"x86"* ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'windows-amd64' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
+        if [[ "$PROCESSOR" == "i386" ]]; then
+                OS_PROCESSOR="windows-386"
+        elif [[ "$PROCESSOR" == *"x86"* ]]; then
+                OS_PROCESSOR="windows-amd64"
         fi
 elif [[ "$OSTYPE" == "freebsd"* ]]; then
         # ...
-        if [[ "$processor" == "i386" ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'linux-386' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
-        elif [[ "$processor" == *"x86"* ]]; then
-                curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
-                        grep browser_download_url |
-                        cut -d '"' -f 4 |
-                        grep 'linux-amd64' |
-                        wget -qi-
-                tarfilename="$(find . -name "*.tar.gz")"
-                tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
+        if [[ "$PROCESSOR" == "i386" ]]; then
+                OS_PROCESSOR="linux-386"
+        elif [[ "$PROCESSOR" == *"x86"* ]]; then
+                OS_PROCESSOR="linux-amd64"
         fi
 fi
 
-echo 'Done!'
-echo '-------------------'
-mv clockify-cli $PROJECT_HOME/clockify-cli
-echo 'To get started you will need a API-key. The key can be genereted on your profile page.'
+curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
+        grep browser_download_url |
+        cut -d '"' -f 4 |
+        grep $OS_PROCESSOR |
+        wget -qi-
+tarfilename="$(find . -name "*$OS_PROCESSOR*.tar.gz")"
+tar -xzf $tarfilename
+rm $tarfilename
+rm "$tarfilename.md5"
 
-$PROJECT_HOME/clockify-cli init
-$PROJECT_HOME/clockify-cli user
+echo "----------------------------"
+mv clockify-cli $PROJECT_HOME/
+echo "To get started you will need a API-key. The key can be genereted on your profile page."
 
-echo "Initialization completed, please run 'clockify help' to get started."
+# Run setup
+$PROJECT_HOME/clockify-cli setup
+
+echo "Initialization completed, please run ${GREEN}clockify help${DEFAULT} to get started."
 echo "You will have to restart any active terminal instance to access you newly created command."
-echo "You can also read the source file with e.g. 'source ~/.zshrc'".
+echo "You can also read the source file with e.g. ${GREEN}source ~/.zshrc${DEFAULT}".
