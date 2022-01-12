@@ -1,18 +1,12 @@
 module github.com/Faagerholm/clockify-cli
 
-go 1.14
+go 1.16
 
 require (
-	github.com/dustin/go-humanize v1.0.0 // indirect
-	github.com/fsnotify/fsnotify v1.4.7
-	github.com/joho/godotenv v1.3.0
-	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23 // indirect
-	github.com/landoop/tableprinter v0.0.0-20200805134727-ea32388e35c1
 	github.com/manifoldco/promptui v0.9.0
-	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/sirupsen/logrus v1.2.0
-	github.com/spf13/cobra v1.0.0
-	github.com/spf13/cobra/cobra v0.0.0-20200916152758-7f8e83d9366a // indirect
-	github.com/spf13/viper v1.7.0
+	github.com/spf13/afero v1.8.0 // indirect
+	github.com/spf13/cobra v1.3.0
+	github.com/spf13/viper v1.10.1
+	golang.org/x/sys v0.0.0-20220111092808-5a964db01320 // indirect
 )
