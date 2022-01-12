@@ -9,7 +9,8 @@ Integrate your clocking with your favorite CLI.
 ## Install:
 
 ```bash
-wget https://raw.githubusercontent.com/Faagerholm/clockify-cli/master/install.sh && ./install.sh
+wget -qO - https://github.com/faagerholm/clockify-cli/archive/master.tar.gz | \
+tar zx --strip-components=1 clockify-cli-master/install.sh
 ```
 
 ## Usage:
@@ -42,3 +43,6 @@ Flags:
 
 Use "clockify-cli [command] --help" for more information about a command.
 ```
+
+wget -qO - https://github.com/faagerholm/clockify-cli/archive/master.tar.gz | \
+tar zx --strip-components=1 clockify-cli-master/install.sh
