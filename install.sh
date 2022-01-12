@@ -30,8 +30,8 @@ else
 fi
 
 processor="$(uname -m)"
-echo 'Downloading the latest release for your machine...'
-# Download the right binary, based on your OS.
+echo "Downloading the latest release for your machine, expected OS: ${processor}"
+
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         if [[ "$processor" == "i386" ]]; then
                 curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
@@ -41,7 +41,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
                         wget -qi-
                 tarfilename="$(find . -name "*.tar.gz")"
                 tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
+                rm $tarfilename
         elif [[ "$processor" == *"x86"* ]]; then
                 curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
                         grep browser_download_url |
@@ -50,7 +50,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
                         wget -qi-
                 tarfilename="$(find . -name "*.tar.gz")"
                 tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
+                rm $tarfilename
         fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         if [[ "$processor" == "i386" ]]; then
@@ -60,8 +60,9 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
                         grep 'darwin-386' |
                         wget -qi-
                 tarfilename="$(find . -name "*.tar.gz")"
+                echo $tarfilename
                 tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
+                rm $tarfilename
         elif [[ "$processor" == *"x86"* ]]; then
                 curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
                         grep browser_download_url |
@@ -70,7 +71,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
                         wget -qi-
                 tarfilename="$(find . -name "*.tar.gz")"
                 tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
+                rm $tarfilename
         fi
 elif [[ "$OSTYPE" == "cygwin" ]]; then
         # POSIX compatibility layer and Linux environment emulation for Windows
@@ -82,7 +83,7 @@ elif [[ "$OSTYPE" == "cygwin" ]]; then
                         wget -qi-
                 tarfilename="$(find . -name "*.tar.gz")"
                 tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
+                rm $tarfilename
         elif [[ "$processor" == *"x86"* ]]; then
                 curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
                         grep browser_download_url |
@@ -91,7 +92,7 @@ elif [[ "$OSTYPE" == "cygwin" ]]; then
                         wget -qi-
                 tarfilename="$(find . -name "*.tar.gz")"
                 tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
+                rm $tarfilename
         fi
 elif [[ "$OSTYPE" == "msys" ]]; then
         # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
@@ -103,7 +104,7 @@ elif [[ "$OSTYPE" == "msys" ]]; then
                         wget -qi-
                 tarfilename="$(find . -name "*.tar.gz")"
                 tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
+                rm $tarfilename
         elif [[ "$processor" == *"x86"* ]]; then
                 curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
                         grep browser_download_url |
@@ -112,7 +113,7 @@ elif [[ "$OSTYPE" == "msys" ]]; then
                         wget -qi-
                 tarfilename="$(find . -name "*.tar.gz")"
                 tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
-                sudo rm $tarfilename
+                rm $tarfilename
         fi
 elif [[ "$OSTYPE" == "win32" ]]; then
         # I'm not sure this can happen.
@@ -156,15 +157,11 @@ elif [[ "$OSTYPE" == "freebsd"* ]]; then
                 tar -xzf $tarfilename && mv $tarfilename/clockify-cli clockify-cli
                 sudo rm $tarfilename
         fi
-else
-        # Unknown.
-        echo 'unknows operating system, unable to download binary.\nYou can visit https://github.com/Faagerholm/clockify-cli/releases/latest to download the right binary'
-        echo 'Please make a issue explaining the problem and I will fix it for you. This should not happen!'
 fi
 
 echo 'Done!'
 echo '-------------------'
-mv clockify-cli $PROJECT_HOME
+mv clockify-cli $PROJECT_HOME/clockify-cli
 echo 'To get started you will need a API-key. The key can be genereted on your profile page.'
 
 $PROJECT_HOME/clockify-cli init
