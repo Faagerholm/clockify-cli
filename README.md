@@ -12,6 +12,7 @@ Integrate your clocking with your favorite CLI.
 wget -qO - https://github.com/faagerholm/clockify-cli/archive/master.tar.gz | \
 tar zx --strip-components=1 clockify-cli-master/install.sh
 ```
+*Note: The install file will remain on your computer until you delete it*
 
 ## Usage:
 ```

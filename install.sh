@@ -92,6 +92,7 @@ rm "$tarfilename.md5"
 echo "----------------------------"
 mv clockify-cli $PROJECT_HOME/
 echo "To get started you will need a API-key. The key can be genereted on your profile page."
+echo "Generate your API-key here: https://clockify.me/user/settings"
 
 # Run setup
 $PROJECT_HOME/clockify-cli setup
