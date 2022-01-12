@@ -1,27 +1,44 @@
+![.github/workflows/release.yaml](https://github.com/Faagerholm/clockify-cli/workflows/.github/workflows/release.yaml/badge.svg?branch=v1.1&event=release)	
+[![CLI Best Practices](https://bestpractices.coreinfrastructure.org/projects/4331/badge)](https://bestpractices.coreinfrastructure.org/projects/4331)	
+
+<a href="https://www.buymeacoffee.com/Faagerholm" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
+
 # clockify-cli
 Integrate your clocking with your favorite CLI. 
 
-### Usage:
+## Install:
+
+```bash
+wget https://raw.githubusercontent.com/Faagerholm/clockify-cli/master/install.sh && ./install.sh
+```
+
+## Usage:
 ```
   clockify-cli [flags]  
   clockify-cli [command]
+  clockify-cli // Run menu
 ```
 ### Available commands:
 ```
-  add-key      Add users API-KEY
-  balance      Display if you're above or below zero balance.
-  help         Help about any command
-  off-projects Select which projects should be omitted from reports
-  projects     Select default workspace project
-  reset        Resets viper values
-  start        start timer for project. Use 'default' flag to use default project id.
-  stop         Stops an active timer.
-  user         get current user
-  version      Print the version number of Clockify-cli
-  workspace    Get workspaces
+Available Commands:
+  add-key         Add users API-KEY, this will store it in a yaml file.
+  add-part-time   Add part-time work to your account
+  check-balance   Check balance
+  completion      Generate the autocompletion script for the specified shell
+  current-user    get current user
+  default-project Select default workspace project
+  help            Help about any command
+  list-projects   List all projects
+  menu            Select action to perform
+  reset           Resets viper values
+  setup           Setup
+  start-timer     Select a project and start a timer
+  stop-timer      Stop timer
 
 Flags:
-      --config string   config file (default is $HOME/.clockify-cli/config.yaml) (default "./config.yaml")
+      --config string   config file (default is $HOME/.clockify-cli/config.yaml)
   -h, --help            help for clockify-cli
       --viper           use Viper for configuration (default true)
+
+Use "clockify-cli [command] --help" for more information about a command.
 ```
