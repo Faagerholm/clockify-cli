@@ -31,8 +31,19 @@ if [ -f "$HOME/.zshrc" ]; then
 elif [ -f "$HOME/.bash_profile" ]; then
         echo "Adding it to your bash_profile file."
         alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.bash_profile
+elif [ -f "$HOME/.bashrc" ]; then
+        echo "Adding it to your bashrc file."
+        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.bashrc
+elif [ -f "$HOME/.profile" ]; then
+        echo "Adding it to your profile file."
+        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.profile
+elif [ -f "/etc/profile" ]; then
+        # This is for the case where the user is using the system profile file
+        # instead of their own.
+        echo "Adding it to your default profile file."
+        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>/etc/profile
 else
-        echo "Could not fine a terminal profile, please manually add ${GREEN}alias clockify='$PROJECT_HOME/clockify-cli'${DEFAULT} to your profile."
+        echo "Could not find a terminal profile, please manually add ${GREEN}alias clockify='$PROJECT_HOME/clockify-cli'${DEFAULT} to your profile."
 fi
 
 PROCESSOR="$(uname -m)"
