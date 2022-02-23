@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	model "github.com/Faagerholm/clockify-cli/pkg/Model"
+	utils "github.com/Faagerholm/clockify-cli/pkg/Utils"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
@@ -56,7 +57,7 @@ func Menu() {
 	case model.MenuActionVerifyMonth:
 		VerifyFullMonth()
 	case model.MenuActionQuit:
-		fmt.Println("Bye!")
+		fmt.Println(utils.RandomExitGreeting())
 	default:
 		fmt.Println("Unknown action")
 	}
