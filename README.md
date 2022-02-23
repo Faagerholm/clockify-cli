@@ -36,6 +36,7 @@ Available Commands:
   setup           Setup
   start-timer     Select a project and start a timer
   stop-timer      Stop timer
+  verify-month    Verify month
 
 Flags:
       --config string   config file (default is $HOME/.clockify-cli/config.yaml)
