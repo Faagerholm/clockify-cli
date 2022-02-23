@@ -65,6 +65,7 @@ func verifyMonth(now, firstDay, lastDay time.Time, fullMonth bool) {
 	}
 
 	fmt.Printf("\nTotal hours this month: %.2f (a normal month is %.2fh) \n", totalHours, maxHours)
+	fmt.Printf("This months saldo is: %.2fh\n", totalHours-maxHours)
 
 }
 
