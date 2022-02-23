@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	controller "github.com/Faagerholm/clockify-cli/pkg/Controller"
+	commands "github.com/Faagerholm/clockify-cli/pkg/cmd"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -22,7 +22,7 @@ var (
 		Short: "A Clockify-cli",
 		Run: func(cmd *cobra.Command, args []string) {
 			// Start menu if no subcommand is given.
-			controller.Menu()
+			commands.Menu()
 		},
 	}
 )
@@ -49,24 +49,25 @@ func init() {
 	rootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
 
 	//root.go
-	rootCmd.AddCommand(controller.AddKeyCmd)
+	rootCmd.AddCommand(commands.AddKeyCmd)
 	rootCmd.AddCommand(resetViperCmd)
-	rootCmd.AddCommand(controller.SetupCmd)
+	rootCmd.AddCommand(commands.SetupCmd)
 	// menu.go
-	rootCmd.AddCommand(controller.MenuCmd)
+	rootCmd.AddCommand(commands.MenuCmd)
 	// project.go
-	rootCmd.AddCommand(controller.DefaultProjectCmd)
-	rootCmd.AddCommand(controller.ListProjectsCmd)
+	rootCmd.AddCommand(commands.DefaultProjectCmd)
+	rootCmd.AddCommand(commands.ListProjectsCmd)
 	// entry.go
-	rootCmd.AddCommand(controller.StartTimerCmd)
-	rootCmd.AddCommand(controller.StopTimerCmd)
+	rootCmd.AddCommand(commands.StartTimerCmd)
+	rootCmd.AddCommand(commands.StopTimerCmd)
 
-	controller.StartTimerCmd.Flags().BoolVarP(&defFlag, "default", "d", false, "Use default project id.")
+	commands.StartTimerCmd.Flags().BoolVarP(&defFlag, "default", "d", false, "Use default project id.")
 	// user.go
-	rootCmd.AddCommand(controller.GetUserCmd)
-	rootCmd.AddCommand(controller.AddPartTimeCmd)
+	rootCmd.AddCommand(commands.GetUserCmd)
+	rootCmd.AddCommand(commands.AddPartTimeCmd)
 	// report.go
-	rootCmd.AddCommand(controller.CheckBalanceCmd)
+	rootCmd.AddCommand(commands.CheckBalanceCmd)
+	rootCmd.AddCommand(commands.VerfiyMonthCmd)
 }
 
 func er(msg interface{}) {

@@ -27,7 +27,7 @@ func GetAllEntries() (
 	last_day_str = now.Format("2006-01-02T15:04:05Z")
 	first_day_str = fmt.Sprintf("%d-01-01T00:00:00Z", now.Year())
 
-	users, err := GetEntries(first_day_str, last_day_str)
+	users, err := getEntries(first_day_str, last_day_str)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func GetAllEntries() (
 		first_day_str = fmt.Sprintf("%d-01-01T00:00:00Z", year)
 		last_day_str = fmt.Sprintf("%d-12-31T23:59:59Z", year)
 
-		users, err := GetEntries(first_day_str, last_day_str)
+		users, err := getEntries(first_day_str, last_day_str)
 		if err != nil {
 			return nil, err
 		}
@@ -59,15 +59,19 @@ func GetAllEntries() (
 	return &user, err
 }
 
-func GetEntries(start_date, end_date string) ([]model.ResultUser, error) {
-	result, err := getEntries(start_date, end_date)
+func GetUserEntries(start_date, end_date time.Time) (*model.ResultUser, error) {
+	res, err := getEntries(start_date.Format("2006-01-02T15:04:05Z"), end_date.Format("2006-01-02T15:04:05Z"))
 	if err != nil {
 		return nil, err
 	}
-	return result.Entries, nil
+	if len(res) != 1 {
+		return nil, errors.New(fmt.Sprintf("Invalid user count found, expected 1, got %d", len(res)))
+	}
+
+	return &res[0], nil
 }
 
-func getEntries(start_date, end_date string) (*model.Result, error) {
+func getEntries(start_date, end_date string) ([]model.ResultUser, error) {
 	user := viper.GetString("USER-ID")
 
 	if len(user) == 0 {
@@ -80,7 +84,11 @@ func getEntries(start_date, end_date string) (*model.Result, error) {
 	}
 
 	res, err := requestReport(reqBody)
-	return res, err
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+	return res.Entries, nil
 }
 
 func requestReport(body []byte) (*model.Result, error) {
