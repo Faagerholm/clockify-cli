@@ -1,4 +1,4 @@
-package controller
+package cmd
 
 import (
 	"fmt"
@@ -29,7 +29,7 @@ func Menu() {
 
 	prompt := promptui.Select{
 		Label:     "Select action",
-		Items:     model.MainMenuActions,
+		Items:     model.MenuActions,
 		Templates: templates,
 		Size:      10,
 	}
@@ -40,20 +40,22 @@ func Menu() {
 		return
 	}
 
-	switch model.MainMenuActions[i] {
-	case model.MainMenuActionChangeAPIKey:
+	switch model.MenuActions[i] {
+	case model.MenuActionChangeAPIKey:
 		Authenticate()
-	case model.MainMenuActionStart:
+	case model.MenuActionStart:
 		StartProject()
-	case model.MainMenuActionStop:
+	case model.MenuActionStop:
 		StopTimer()
-	case model.MainMenuActionShowProjects:
+	case model.MenuActionShowProjects:
 		ListProjects()
-	case model.MainMenuActionCheckBalance:
+	case model.MenuActionCheckBalance:
 		CheckBalance()
-	case model.MainMenuActionSetPartTime:
+	case model.MenuActionSetPartTime:
 		AddPartTimeTimespan()
-	case model.MainMenuActionQuit:
+	case model.MenuActionVerifyMonth:
+		VerifyFullMonth()
+	case model.MenuActionQuit:
 		fmt.Println("Bye!")
 	default:
 		fmt.Println("Unknown action")
