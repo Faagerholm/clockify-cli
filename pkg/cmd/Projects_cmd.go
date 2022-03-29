@@ -17,6 +17,8 @@ var DefaultProjectCmd = &cobra.Command{
 	Long: `Display all workspace projects and 
 	select the default project to use when starting a timer`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		CheckConfigAndPromptSetup()
 		DefaultProject()
 	},
 }
@@ -26,6 +28,7 @@ var ListProjectsCmd = &cobra.Command{
 	Short: "List all projects",
 	Long:  `Display all projects in the current workspace`,
 	Run: func(cmd *cobra.Command, args []string) {
+		CheckConfigAndPromptSetup()
 		ListProjects()
 	},
 }

@@ -15,6 +15,8 @@ var StopTimerCmd = &cobra.Command{
 	Short: "Stop timer",
 	Long:  `Stop the current timer`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		CheckConfigAndPromptSetup()
 		StopTimer()
 	},
 }

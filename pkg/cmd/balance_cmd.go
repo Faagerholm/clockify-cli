@@ -16,6 +16,8 @@ var CheckBalanceCmd = &cobra.Command{
 	Short: "Check balance",
 	Long:  `Check the balance of the current account`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		CheckConfigAndPromptSetup()
 		CheckBalance()
 	},
 }
@@ -25,6 +27,7 @@ var AddPartTimeCmd = &cobra.Command{
 	Short: "Add part-time work to your account",
 	Long:  `Add part-time, if you have been working less during a time period.`,
 	Run: func(cmd *cobra.Command, args []string) {
+
 		AddPartTimeTimespan()
 	},
 }

@@ -75,6 +75,7 @@ func getEntries(start_date, end_date string) ([]model.ResultUser, error) {
 	user := viper.GetString("USER-ID")
 
 	if len(user) == 0 {
+		// TODO: Notify user to run setup (run it for them)
 		return nil, errors.New("HANDLE ME")
 	}
 

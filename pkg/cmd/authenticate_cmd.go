@@ -16,6 +16,8 @@ var GetUserCmd = &cobra.Command{
 	Use:   "current-user",
 	Short: "get current user",
 	Run: func(cmd *cobra.Command, args []string) {
+
+		CheckConfigAndPromptSetup()
 		getUser()
 	},
 }
@@ -27,7 +29,6 @@ var AddKeyCmd = &cobra.Command{
 	At the bottom of the page, generate KEY.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		key := ""
-		fmt.Println(len(args))
 		if len(args) == 0 {
 			key = viper.GetString("API-KEY")
 		} else {
@@ -148,5 +149,11 @@ As of now, no more the one key can be used at the same time.`)
 
 	case "n":
 		fmt.Println("The key was NOT added.")
+	}
+}
+
+func CheckConfigAndPromptSetup() {
+	if viper.GetString("API-KEY") == "" {
+		Authenticate()
 	}
 }

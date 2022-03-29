@@ -22,6 +22,7 @@ var (
 		Short: "A Clockify-cli",
 		Run: func(cmd *cobra.Command, args []string) {
 			// Start menu if no subcommand is given.
+			commands.CheckConfigAndPromptSetup()
 			commands.Menu()
 		},
 	}

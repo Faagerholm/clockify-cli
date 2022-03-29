@@ -15,6 +15,7 @@ var MenuCmd = &cobra.Command{
 	Long: `Display all available actions and
 	select the action to perform`,
 	Run: func(cmd *cobra.Command, args []string) {
+
 		Menu()
 	},
 }
@@ -43,18 +44,29 @@ func Menu() {
 
 	switch model.MenuActions[i] {
 	case model.MenuActionChangeAPIKey:
+
 		Authenticate()
 	case model.MenuActionStart:
+
+		CheckConfigAndPromptSetup()
 		StartProject()
 	case model.MenuActionStop:
+
+		CheckConfigAndPromptSetup()
 		StopTimer()
 	case model.MenuActionShowProjects:
+
+		CheckConfigAndPromptSetup()
 		ListProjects()
 	case model.MenuActionCheckBalance:
+
+		CheckConfigAndPromptSetup()
 		CheckBalance()
 	case model.MenuActionSetPartTime:
 		AddPartTimeTimespan()
 	case model.MenuActionVerifyMonth:
+
+		CheckConfigAndPromptSetup()
 		VerifyFullMonth()
 	case model.MenuActionQuit:
 		fmt.Println(utils.RandomExitGreeting())

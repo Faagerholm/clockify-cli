@@ -19,6 +19,8 @@ var StartTimerCmd = &cobra.Command{
 	Long: `Display all projects in the current workspace and
 	select the project to start a timer in. A default project can be used`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		CheckConfigAndPromptSetup()
 		StartProject()
 	},
 }
