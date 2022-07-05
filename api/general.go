@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"time"
 
-	model "github.com/Faagerholm/clockify-cli/pkg/Model"
-	utils "github.com/Faagerholm/clockify-cli/pkg/Utils"
+	"github.com/Faagerholm/clockify-cli/domain"
+	"github.com/Faagerholm/clockify-cli/utils"
 )
 
 func Start(start_time time.Time, project string) {
@@ -41,7 +41,7 @@ func Start(start_time time.Time, project string) {
 	defer resp.Body.Close()
 }
 
-func Stop(end_time_str string) model.Entry {
+func Stop(end_time_str string) domain.Entry {
 	key, workspace, user := utils.ExtractAPIKeyAndWorkspaceAndUserId()
 
 	reqBody, err := json.Marshal(map[string]string{
@@ -64,13 +64,13 @@ func Stop(end_time_str string) model.Entry {
 	}
 	defer resp.Body.Close()
 
-	var entry model.Entry
+	var entry domain.Entry
 	json.NewDecoder(resp.Body).Decode(&entry)
 	return entry
 }
 
 func GetProjects() (
-	[]model.Project,
+	[]domain.Project,
 	error,
 ) {
 	key, workspace := utils.ExtractAPIKeyAndWorkspace()
@@ -89,7 +89,7 @@ func GetProjects() (
 		log.Fatal(err)
 	}
 
-	results := []model.Project{}
+	results := []domain.Project{}
 	jsonErr := json.Unmarshal(body, &results)
 	if jsonErr != nil {
 		return nil, jsonErr
@@ -97,7 +97,7 @@ func GetProjects() (
 	return results, nil
 }
 
-func GetUser() *model.User {
+func GetUser() *domain.User {
 	key := utils.ExtractAPIKey()
 
 	client := &http.Client{}
@@ -110,13 +110,13 @@ func GetUser() *model.User {
 	}
 	defer resp.Body.Close()
 
-	var user *model.User
+	var user *domain.User
 
 	json.NewDecoder(resp.Body).Decode(&user)
 	return user
 }
 
-func AddDescription(entryID string, updateEntry model.UpdateEntry) {
+func AddDescription(entryID string, updateEntry domain.UpdateEntry) {
 	key, workspace := utils.ExtractAPIKeyAndWorkspace()
 
 	reqBody, err := json.Marshal(updateEntry)

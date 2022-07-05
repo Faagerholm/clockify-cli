@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	api "github.com/Faagerholm/clockify-cli/pkg/API"
-	model "github.com/Faagerholm/clockify-cli/pkg/Model"
+	api "github.com/Faagerholm/clockify-cli/API"
+	domain "github.com/Faagerholm/clockify-cli/domain"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -53,10 +53,10 @@ func CheckBalance() {
 }
 
 func AddPartTimeTimespan() {
-	var partTimes []model.PartTime
+	var partTimes []domain.PartTime
 	viper.UnmarshalKey("part-time", &partTimes)
 
-	var newPartTime model.PartTime
+	var newPartTime domain.PartTime
 	fmt.Print("Enter start date (YYYY-MM-DD): ")
 	fmt.Scanln(&newPartTime.Start)
 	fmt.Print("Enter end date (YYYY-MM-DD): ")
@@ -71,7 +71,7 @@ func AddPartTimeTimespan() {
 	fmt.Printf("Added part-time: %v\n", newPartTime)
 }
 
-func extractFirstDayFromEntries(entries []model.ReportEntry) time.Time {
+func extractFirstDayFromEntries(entries []domain.ReportEntry) time.Time {
 	first_day := time.Now()
 	for _, day := range entries {
 		d, _ := time.Parse("2006-01-02", day.Date)
@@ -108,7 +108,7 @@ func countExpectedWorkingTime(start, end time.Time) (int64, int32) {
 }
 
 func subtractPartTimeWork(duration int64) int64 {
-	var partTimes []model.PartTime
+	var partTimes []domain.PartTime
 	viper.UnmarshalKey("part-time", &partTimes)
 
 	for _, partTime := range partTimes {

@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Report struct {
 	Start         string         `json:"dateRangeStart"`

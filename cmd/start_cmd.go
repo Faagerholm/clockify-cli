@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	api "github.com/Faagerholm/clockify-cli/pkg/API"
-	model "github.com/Faagerholm/clockify-cli/pkg/Model"
+	api "github.com/Faagerholm/clockify-cli/API"
+	domain "github.com/Faagerholm/clockify-cli/domain"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -72,8 +72,8 @@ func StartProject() {
 
 }
 
-func checkDefaultProject() *model.Project {
-	var defaultProject *model.Project
+func checkDefaultProject() *domain.Project {
+	var defaultProject *domain.Project
 	viper.UnmarshalKey("default-project", &defaultProject)
 	if defaultProject == nil {
 		fmt.Println("No default project set")

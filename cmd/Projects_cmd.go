@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	api "github.com/Faagerholm/clockify-cli/pkg/API"
+	api "github.com/Faagerholm/clockify-cli/API"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

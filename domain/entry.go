@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Entry struct {
 	ID           string `json:"id"`

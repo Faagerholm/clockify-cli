@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Project struct {
 	Name string `json:"name"`

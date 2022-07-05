@@ -1,10 +1,10 @@
-package pkg
+package main
 
 import (
 	"fmt"
 	"os"
 
-	commands "github.com/Faagerholm/clockify-cli/pkg/cmd"
+	commands "github.com/Faagerholm/clockify-cli/cmd"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

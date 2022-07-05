@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	api "github.com/Faagerholm/clockify-cli/pkg/API"
-	model "github.com/Faagerholm/clockify-cli/pkg/Model"
-	utils "github.com/Faagerholm/clockify-cli/pkg/Utils"
+	api "github.com/Faagerholm/clockify-cli/API"
+	utils "github.com/Faagerholm/clockify-cli/Utils"
+	domain "github.com/Faagerholm/clockify-cli/domain"
 	"github.com/fatih/color"
 
 	"github.com/spf13/cobra"
@@ -69,7 +69,7 @@ func verifyMonth(now, firstDay, lastDay time.Time, fullMonth bool) {
 
 }
 
-func isDayInEntries(date time.Time, entries []model.ReportEntry) bool {
+func isDayInEntries(date time.Time, entries []domain.ReportEntry) bool {
 	dateStr := date.Format("2006-01-02")
 
 	for _, entry := range entries {

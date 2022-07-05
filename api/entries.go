@@ -9,14 +9,14 @@ import (
 	"net/http"
 	"time"
 
-	model "github.com/Faagerholm/clockify-cli/pkg/Model"
+	"github.com/Faagerholm/clockify-cli/domain"
 	"github.com/spf13/viper"
 )
 
 // GetAllEntries returns all entries from the Clockify API.
 // From the first day, until today
 func GetAllEntries() (
-	*model.ResultUser,
+	*domain.ResultUser,
 	error,
 ) {
 	var first_day_str, last_day_str string
@@ -59,7 +59,7 @@ func GetAllEntries() (
 	return &user, err
 }
 
-func GetUserEntries(start_date, end_date time.Time) (*model.ResultUser, error) {
+func GetUserEntries(start_date, end_date time.Time) (*domain.ResultUser, error) {
 	res, err := getEntries(start_date.Format("2006-01-02T15:04:05Z"), end_date.Format("2006-01-02T15:04:05Z"))
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func GetUserEntries(start_date, end_date time.Time) (*model.ResultUser, error) {
 	return &res[0], nil
 }
 
-func getEntries(start_date, end_date string) ([]model.ResultUser, error) {
+func getEntries(start_date, end_date string) ([]domain.ResultUser, error) {
 	user := viper.GetString("USER-ID")
 
 	if len(user) == 0 {
@@ -92,7 +92,7 @@ func getEntries(start_date, end_date string) ([]model.ResultUser, error) {
 	return res.Entries, nil
 }
 
-func requestReport(body []byte) (*model.Result, error) {
+func requestReport(body []byte) (*domain.Result, error) {
 	key := viper.GetString("API-KEY")
 	workspace := viper.GetString("WORKSPACE")
 
@@ -113,7 +113,7 @@ func requestReport(body []byte) (*model.Result, error) {
 
 	defer resp.Body.Close()
 
-	res := new(model.Result)
+	res := new(domain.Result)
 
 	json.NewDecoder(resp.Body).Decode(&res)
 	return res, err
@@ -121,14 +121,14 @@ func requestReport(body []byte) (*model.Result, error) {
 
 func marshalRequestBody(user, start_date, end_date string) ([]byte, error) {
 
-	return json.Marshal(model.Report{
+	return json.Marshal(domain.Report{
 		Start: start_date,
 		End:   end_date,
-		SummaryFilter: &model.Report_filter{
+		SummaryFilter: &domain.Report_filter{
 			Groups: []string{"user", "date"},
 		},
 		SortOrder: "Ascending",
-		Users: &model.Report_user{
+		Users: &domain.Report_user{
 			Ids:      []string{user},
 			Contains: "CONTAINS",
 			Status:   "All",

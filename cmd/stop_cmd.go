@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	api "github.com/Faagerholm/clockify-cli/pkg/API"
-	model "github.com/Faagerholm/clockify-cli/pkg/Model"
+	api "github.com/Faagerholm/clockify-cli/API"
+	domain "github.com/Faagerholm/clockify-cli/domain"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
@@ -42,8 +42,8 @@ func StopTimer() {
 	api.AddDescription(entry.ID, updateEntry)
 }
 
-func convertyEntryToUpdateEntry(entry model.Entry) model.UpdateEntry {
-	return model.UpdateEntry{
+func convertyEntryToUpdateEntry(entry domain.Entry) domain.UpdateEntry {
+	return domain.UpdateEntry{
 		Start:       entry.TimeInterval.Start,
 		Billable:    entry.Billable,
 		Description: entry.Description,

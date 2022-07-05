@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	model "github.com/Faagerholm/clockify-cli/pkg/Model"
-	utils "github.com/Faagerholm/clockify-cli/pkg/Utils"
+	utils "github.com/Faagerholm/clockify-cli/Utils"
+	domain "github.com/Faagerholm/clockify-cli/domain"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
@@ -31,7 +31,7 @@ func Menu() {
 
 	prompt := promptui.Select{
 		Label:     "Select action",
-		Items:     model.MenuActions,
+		Items:     domain.MenuActions,
 		Templates: templates,
 		Size:      10,
 	}
@@ -42,33 +42,33 @@ func Menu() {
 		return
 	}
 
-	switch model.MenuActions[i] {
-	case model.MenuActionChangeAPIKey:
+	switch domain.MenuActions[i] {
+	case domain.MenuActionChangeAPIKey:
 
 		Authenticate()
-	case model.MenuActionStart:
+	case domain.MenuActionStart:
 
 		CheckConfigAndPromptSetup()
 		StartProject()
-	case model.MenuActionStop:
+	case domain.MenuActionStop:
 
 		CheckConfigAndPromptSetup()
 		StopTimer()
-	case model.MenuActionShowProjects:
+	case domain.MenuActionShowProjects:
 
 		CheckConfigAndPromptSetup()
 		ListProjects()
-	case model.MenuActionCheckBalance:
+	case domain.MenuActionCheckBalance:
 
 		CheckConfigAndPromptSetup()
 		CheckBalance()
-	case model.MenuActionSetPartTime:
+	case domain.MenuActionSetPartTime:
 		AddPartTimeTimespan()
-	case model.MenuActionVerifyMonth:
+	case domain.MenuActionVerifyMonth:
 
 		CheckConfigAndPromptSetup()
 		VerifyFullMonth()
-	case model.MenuActionQuit:
+	case domain.MenuActionQuit:
 		fmt.Println(utils.RandomExitGreeting())
 	default:
 		fmt.Println("Unknown action")
