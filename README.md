@@ -16,9 +16,9 @@ tar zx --strip-components=1 clockify-cli-master/install.sh
 
 ## Usage:
 ```
-  clockify-cli [flags]  
-  clockify-cli [command]
-  clockify-cli // Run menu
+  clockify [flags]  
+  clockify [command]
+  clockify // Run menu
 ```
 ### Available commands:
 ```
