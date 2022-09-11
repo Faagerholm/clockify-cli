@@ -76,7 +76,7 @@ func getEntries(start_date, end_date string) ([]domain.ResultUser, error) {
 
 	if len(user) == 0 {
 		// TODO: Notify user to run setup (run it for them)
-		return nil, errors.New("HANDLE ME")
+		return nil, errors.New("USER ID NOT SET! Please run clockify user-id")
 	}
 
 	reqBody, err := marshalRequestBody(user, start_date, end_date)
@@ -120,7 +120,6 @@ func requestReport(body []byte) (*domain.Result, error) {
 }
 
 func marshalRequestBody(user, start_date, end_date string) ([]byte, error) {
-
 	return json.Marshal(domain.Report{
 		Start: start_date,
 		End:   end_date,

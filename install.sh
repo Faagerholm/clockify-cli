@@ -46,6 +46,9 @@ else
         echo "Could not find a terminal profile, please manually add ${GREEN}alias clockify='$PROJECT_HOME/clockify-cli'${DEFAULT} to your profile."
 fi
 
+# init alias temporarily
+alias clockify="$PROJECT_HOME/clockify-cli"
+
 PROCESSOR="$(uname -m)"
 OS_PROCESSOR=""
 echo "${LIME_YELLOW}Downloading the latest release for your machine..${DEFAULT}"
@@ -111,5 +114,3 @@ echo "Generate your API-key here: ${BLUE}https://clockify.me/user/settings${DEFA
 $PROJECT_HOME/clockify-cli setup
 
 echo "Initialization completed, please run ${GREEN}clockify help${DEFAULT} to get started."
-echo "You will have to restart any active terminal instance to access you newly created command."
-echo "You can also read the source file with e.g. ${GREEN}source ~/.zshrc${DEFAULT}".
