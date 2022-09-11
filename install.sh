@@ -3,10 +3,11 @@
 DEFAULT=$(tput sgr0)
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
-BLUE=$(tput setaf 4)
+PINK=$(tput setaf 5)
 LIME_YELLOW=$(tput setaf 190)
 
 PROJECT_HOME="$HOME/.clockify-cli"
+ALIAS="alias clockify='$PROJECT_HOME/bin/clockify-cli'"
 
 echo "${LIME_YELLOW}Initializing clockify-cli..${DEFAULT}"
 
@@ -14,6 +15,7 @@ if [ -d $PROJECT_HOME ]; then
         echo "Project directory already exists"
 else
         $(mkdir -p $PROJECT_HOME)
+        $(mkdir -p $PROJECT_HOME/bin)
         echo "$PROJECT_HOME directory is created"
 fi
 
@@ -27,27 +29,28 @@ fi
 echo "Creating alias for clockify"
 if [ -f "$HOME/.zshrc" ]; then
         echo "Adding it to your zshrc file."
-        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.zshrc
+        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo $ALIAS >>$HOME/.zshrc
 elif [ -f "$HOME/.bash_profile" ]; then
         echo "Adding it to your bash_profile file."
-        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.bash_profile
+        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo $ALIAS >>$HOME/.bash_profile
 elif [ -f "$HOME/.bashrc" ]; then
         echo "Adding it to your bashrc file."
-        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.bashrc
+        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo $ALIAS >>$HOME/.bashrc
 elif [ -f "$HOME/.profile" ]; then
         echo "Adding it to your profile file."
-        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>$HOME/.profile
+        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo $ALIAS >>$HOME/.profile
 elif [ -f "/etc/profile" ]; then
         # This is for the case where the user is using the system profile file
         # instead of their own.
         echo "Adding it to your default profile file."
-        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo "alias clockify='$PROJECT_HOME/clockify-cli'" >>/etc/profile
+        alias clockify >/dev/null 2>&1 && echo "${GREEN}clockify${DEFAULT} is set as an alias, skipping update of source file." || echo $ALIAS >>/etc/profile
 else
-        echo "Could not find a terminal profile, please manually add ${GREEN}alias clockify='$PROJECT_HOME/clockify-cli'${DEFAULT} to your profile."
+        echo "Could not find a terminal profile, please manually add ${GREEN}alias clockify='$PROJECT_HOME/bin/clockify-cli'${DEFAULT} to your profile."
 fi
 
 # init alias temporarily
-alias clockify="$PROJECT_HOME/clockify-cli"
+alias clockify="$PROJECT_HOME/bin/clockify-cli"
+alias clockify=~/.clockify-cli/bin/clockify-cli
 
 PROCESSOR="$(uname -m)"
 OS_PROCESSOR=""
@@ -106,11 +109,18 @@ rm $tarfilename
 rm "$tarfilename.md5"
 
 echo "----------------------------"
-mv clockify-cli $PROJECT_HOME/
+mv clockify-cli $PROJECT_HOME/bin/clockify-cli
+
+# save git version to config directory
+curl -s https://api.github.com/repos/faagerholm/clockify-cli/releases/latest |
+        grep tag_name |
+        cut -d '"' -f 4 |
+        sed 's/v//' >$PROJECT_HOME/.version
+
 echo "To get started you will need a API-key. The key can be genereted on your profile page."
-echo "Generate your API-key here: ${BLUE}https://clockify.me/user/settings${DEFAULT}"
+echo "Generate your API-key here: ${PINK}https://clockify.me/user/settings${DEFAULT}"
 
 # Run setup
-$PROJECT_HOME/clockify-cli setup
+clockify setup
 
 echo "Initialization completed, please run ${GREEN}clockify help${DEFAULT} to get started."
