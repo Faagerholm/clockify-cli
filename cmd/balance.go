@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	api "github.com/Faagerholm/clockify-cli/API"
-	domain "github.com/Faagerholm/clockify-cli/domain"
+	"github.com/Faagerholm/clockify-cli/api"
+	"github.com/Faagerholm/clockify-cli/domain"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	utils "github.com/Faagerholm/clockify-cli/Utils"
-	domain "github.com/Faagerholm/clockify-cli/domain"
+	"github.com/Faagerholm/clockify-cli/domain"
+	"github.com/Faagerholm/clockify-cli/utils"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
@@ -44,30 +44,26 @@ func Menu() {
 
 	switch domain.MenuActions[i] {
 	case domain.MenuActionChangeAPIKey:
-
 		Authenticate()
 	case domain.MenuActionStart:
-
 		CheckConfigAndPromptSetup()
 		StartProject()
 	case domain.MenuActionStop:
-
 		CheckConfigAndPromptSetup()
 		StopTimer()
 	case domain.MenuActionShowProjects:
-
 		CheckConfigAndPromptSetup()
 		ListProjects()
 	case domain.MenuActionCheckBalance:
-
 		CheckConfigAndPromptSetup()
 		CheckBalance()
 	case domain.MenuActionSetPartTime:
 		AddPartTimeTimespan()
 	case domain.MenuActionVerifyMonth:
-
 		CheckConfigAndPromptSetup()
 		VerifyFullMonth()
+	case domain.MenuActionUpdate:
+		utils.Update()
 	case domain.MenuActionQuit:
 		fmt.Println(utils.RandomExitGreeting())
 	default:

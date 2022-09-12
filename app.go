@@ -69,6 +69,9 @@ func init() {
 	// report.go
 	rootCmd.AddCommand(commands.CheckBalanceCmd)
 	rootCmd.AddCommand(commands.VerfiyMonthCmd)
+
+	// config.go
+	rootCmd.AddCommand(commands.UpdateCmd)
 }
 
 func er(msg interface{}) {

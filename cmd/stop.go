@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	api "github.com/Faagerholm/clockify-cli/API"
-	domain "github.com/Faagerholm/clockify-cli/domain"
+	"github.com/Faagerholm/clockify-cli/api"
+	"github.com/Faagerholm/clockify-cli/domain"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )

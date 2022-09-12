@@ -11,6 +11,7 @@ var MenuActionShowProjects = MenuAction{Name: "Show Projects", Idx: 2}
 var MenuActionCheckBalance = MenuAction{Name: "Check Balance", Idx: 3}
 var MenuActionSetPartTime = MenuAction{Name: "Set part-time", Idx: 4}
 var MenuActionChangeAPIKey = MenuAction{Name: "Change API key", Idx: 5}
+var MenuActionUpdate = MenuAction{Name: "Update", Idx: 8}
 var MenuActionQuit = MenuAction{Name: "Quit", Idx: 6}
 var MenuActionVerifyMonth = MenuAction{Name: "Verify Month", Idx: 7}
 
@@ -22,5 +23,6 @@ var MenuActions = []MenuAction{
 	MenuActionVerifyMonth,
 	MenuActionSetPartTime,
 	MenuActionChangeAPIKey,
+	MenuActionUpdate,
 	MenuActionQuit,
 }

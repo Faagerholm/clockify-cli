@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	api "github.com/Faagerholm/clockify-cli/API"
-	utils "github.com/Faagerholm/clockify-cli/Utils"
-	domain "github.com/Faagerholm/clockify-cli/domain"
+	"github.com/Faagerholm/clockify-cli/api"
+	"github.com/Faagerholm/clockify-cli/domain"
+	"github.com/Faagerholm/clockify-cli/utils"
 	"github.com/fatih/color"
 
 	"github.com/spf13/cobra"

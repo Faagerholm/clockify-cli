@@ -14,6 +14,12 @@ tar zx --strip-components=1 clockify-cli-master/install.sh
 ```
 *Note: The install file will remain on your computer until you delete it*
 
+## Update:
+
+```bash
+clockify-cli update
+```
+
 ## Usage:
 ```
   clockify-cli [flags]  
